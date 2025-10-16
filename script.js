@@ -1,26 +1,32 @@
-    const buttons = document.querySelectorAll(".btn");
-    let currentAudio = null; // store currently playing sound
+const buttons = document.querySelectorAll(".btn");
+let currentAudio = null;
 
-    buttons.forEach((button) => {
-      button.addEventListener("click", () => {
-        // Stop any currently playing sound before starting a new one
-        if (currentAudio) {
-          currentAudio.pause();
-          currentAudio.currentTime = 0;
-        }
+buttons.forEach((button) => {
+  button.addEventListener("click", () => {
+    // stop previous sound
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio.remove(); // remove old <audio> from DOM
+    }
 
-        // Create and play new sound
-        const sound = new Audio(`./sounds/${button.id}.mp3`);
-        currentAudio = sound;
-        sound.play();
-      });
-    });
+    // create and append new audio element
+    const sound = document.createElement("audio");
+    sound.src = `./sounds/${button.id}.mp3`;
+    sound.setAttribute("controls", ""); // optional (helps Cypress detect it)
+    document.body.appendChild(sound);
 
-    // Stop button functionality
-    const stop = document.querySelector(".stop");
-    stop.addEventListener("click", () => {
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0; // reset audio to start
-      }
-    });
+    sound.play();
+    currentAudio = sound;
+  });
+});
+
+// stop button functionality
+const stop = document.querySelector(".stop");
+stop.addEventListener("click", () => {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    currentAudio.remove();
+  }
+});
